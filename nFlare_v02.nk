@@ -1,0 +1,165 @@
+set cut_paste_input [stack 0]
+version 6.3 v4
+push $cut_paste_input
+Group {
+ name nFlare_v02
+ knobChanged "\nif nuke.thisKnob().name() == \"PresetsList\":\n    if nuke.thisKnob().value() != '-':\n        if nuke.thisKnob().value() != '0':\n            refreshNode()\n            for i in nuke.allNodes():\n                if i.name() != 'Output1' and i.name() != 'Global_Values':\n                    nuke.delete(nuke.toNode(i.name()))\n            nuke.nodePaste(directory + nuke.thisKnob().value() + '.txt')\n            makeKnobsPreset()\n    nuke.thisKnob().setValue('-')\n"
+ tile_color 0x222326ff
+ note_font Helvetica
+ selected true
+ xpos -40
+ ypos -334
+ addUserKnob {20 User l "Flare Setup"}
+ addUserKnob {22 flareFunc l INVISIBLE +INVISIBLE T "import os\nsaveFlares = '\\\\assets\\\\nFlarePresets\\\\'\nif os.getenv('NUKE_PATH'):\n    directory = os.getenv('NUKE_PATH') + saveFlares\nelse:\n    directory = saveFlares\n\nmain = ('Input1', 'Switch1', 'Invert1', 'Remove1', 'Constant1')\n\nif not os.path.exists(directory):\n    os.makedirs(directory)\n\ndef makePreset():   \n    for i in nuke.allNodes():\n        if i.name() != 'Output1' and i.name() != 'Global_Values':\n            i.setSelected(True)\n    presetName = nuke.getInput('Name of preset', '')\n    nuke.nodeCopy(directory + presetName + '.txt')\n    refreshNode()\n\nnuke.thisNode()\['knobChanged'].setValue(\"\"\"\nif nuke.thisKnob().name() == \"PresetsList\":\n    if nuke.thisKnob().value() != '-':\n        if nuke.thisKnob().value() != '0':\n            refreshNode()\n            for i in nuke.allNodes():\n                if i.name() != 'Output1' and i.name() != 'Global_Values':\n                    nuke.delete(nuke.toNode(i.name()))\n            nuke.nodePaste(directory + nuke.thisKnob().value() + '.txt')\n            makeKnobsPreset()\n    nuke.thisKnob().setValue('-')\n\"\"\")\ndef makeKnobsPreset():\n    lastSel = \[]\n    for i in nuke.selectedNodes():\n        if i.name() != 'Output1' and i.name() != 'Global_Values':\n            i.setSelected(True)\n        lastSel.append(i.name())\n    nuke.toNode('Global_Values').setInput(0,nuke.toNode(lastSel\[0]))\n    ### Gather nodes in group and populate list\n    listofNodeNames = \[]\n    g = nuke.thisNode()\n    g.begin()\n    for n in nuke.allNodes():\n        if n.Class() == 'Flare':\n            listofNodeNames.append(n.name())\n    g.end()\n    ### In the list, add corresponding knobs that link to that node\n    for i in listofNodeNames:\n        newKnob = nuke.Boolean_Knob(i + '_disable', 'Disable')\n        showControls = nuke.PyScript_Knob(i+ '_show', 'Show Options', \"nuke.show(nuke.toNode('\" + i + \"'),1)\")\n        addDel = nuke.PyScript_Knob('Del_' + i, \"<img src='ColorMult.png' height='12' width='12'/>\", \"nuke.thisNode().removeKnob(nuke.thisNode().knob('\" + i + \"_disable')) \\nnuke.thisNode().removeKnob(nuke.thisNode().knob('Del_\" + i + \"'))\\nnuke.delete(nuke.toNode('\" + i + \"')) \\nnuke.thisNode().removeKnob(nuke.thisNode().knob('\" + i + \"_show')) \\nnuke.thisNode().removeKnob(nuke.thisNode().knob('\" + i + \"_text'))\")\n        #addDel = nuke.PyScript_Knob('print True', 'print True')\n        nameKnob = nuke.Text_Knob(i + '_text', '', '          ' +i)\n        if g.knob(i+'_disable'):\n            pass\n        else:\n            g.addKnob(showControls)\n            g.addKnob(newKnob)\n            g.addKnob(addDel)\n            g.addKnob(nameKnob)\n            showControls.setFlag(nuke.STARTLINE) \n            nameKnob.clearFlag(nuke.STARTLINE) \n\n\n\n\n\ndef refreshPulldown():\n    listPresets = \[]\n    listPresets.append('-')\n    nuke.thisNode()\['PresetsList'].setValues(\[])\n    for i in os.listdir(directory):\n        listPresets.append(i.strip('.txt'))\n    nuke.thisNode()\['PresetsList'].setValues(listPresets)\n\ndef treeTop():\n    nuke.tcl('''\n    Constant \{\n     inputs 0\n     channels rgba\n     name Constant1\n     selected true\n     xpos 380\n     ypos 1263\n    \}\n    Input \{\n     inputs 0\n     name Input1\n     selected true\n     xpos 100\n     ypos 1143\n    \}\n    Switch \{\n     inputs 2\n     which \{\{!parent.hInput i\}\}\n     name Switch1\n     selected true\n     xpos 100\n     ypos 1287\n    \}\n    Invert \{\n     channels alpha\n     name Invert1\n     selected true\n     xpos 100\n     ypos 1389\n     disable \{\{!parent.imask i\}\}\n    \}\n    Remove \{\n     operation keep\n     channels alpha\n     name Remove1\n     selected true\n     xpos 520\n     ypos 1389\n    \}\n    ''')\n\ndef exVar(nodeName, newNode):\n    newNode\['disable'].setExpression('this.parent.'+nodeName + '_disable')\n    newNode\['vis_mask'].setValue('rgba.alpha')\n    merge = nuke.createNode('Merge','operation screen',False)\n    merge.setInput(0,nuke.toNode(nuke.toNode('Global_Values').input(0).name()))\n    newNode.setInput(0,nuke.toNode('Remove1'))\n    nuke.toNode('Global_Values').setInput(0,merge)\n    s = nuke.allNodes() \n    for i in s : \n        i\['selected'].setValue(False) \n\n    ### Gather nodes in group and populate list\n    listofNodeNames = \[]\n    g = nuke.thisNode()\n    g.begin()\n    for n in nuke.allNodes():\n        if n.Class() == 'Flare':\n            listofNodeNames.append(n.name())\n    g.end()\n    \n    ### In the list, add corresponding knobs that link to that node\n    for i in listofNodeNames:\n        newKnob = nuke.Boolean_Knob(i + '_disable', 'Disable')\n        showControls = nuke.PyScript_Knob(i+ '_show', 'Show Options', \"nuke.show(nuke.toNode('\" + i + \"'),1)\")\n        addDel = nuke.PyScript_Knob('Del_' + i, \"<img src='ColorMult.png' height='12' width='12'/>\", \"nuke.thisNode().removeKnob(nuke.thisNode().knob('\" + i + \"_disable')) \\nnuke.thisNode().removeKnob(nuke.thisNode().knob('Del_\" + i + \"'))\\nnuke.delete(nuke.toNode('\" + i + \"'))\\nnuke.delete(nuke.toNode('\" + merge.name() + \"'))\\nnuke.thisNode().removeKnob(nuke.thisNode().knob('\" + i + \"_show')) \\nnuke.thisNode().removeKnob(nuke.thisNode().knob('\" + i + \"_text'))\")\n        #addDel = nuke.PyScript_Knob('print True', 'print True')\n        nameKnob = nuke.Text_Knob(i + '_text', '', '          ' +i)\n        if g.knob(i+'_disable'):\n            pass\n        else:\n            g.addKnob(showControls)\n            g.addKnob(newKnob)\n            g.addKnob(addDel)\n            g.addKnob(nameKnob)\n            showControls.setFlag(nuke.STARTLINE) \n            nameKnob.clearFlag(nuke.STARTLINE) \n\n\n### Count number of flares for creating knobs without name error\n###\nnumNodes = len(nuke.allNodes('Flare'))\nfor i in nuke.allNodes(): \n    i.setSelected(False)\n\ndef refreshNode():\n    for n in nuke.allNodes('Flare'):\n        i = n.name()\n        nuke.delete(n)\n        nuke.thisNode().removeKnob(nuke.thisNode().knob(i+'_disable'))\n        nuke.thisNode().removeKnob(nuke.thisNode().knob('Del_'+ i))\n        nuke.thisNode().removeKnob(nuke.thisNode().knob( i + '_show'))\n        nuke.thisNode().removeKnob(nuke.thisNode().knob( i + '_text'))\n    for n in nuke.allNodes('Merge'):\n        i = n.name()\n        nuke.delete(n)\n    for n in nuke.allNodes('Transform'):\n        i = n.name()\n        nuke.delete(n)\n    for i in main:\n        nuke.delete(nuke.toNode(i))\n    treeTop()\n    nuke.toNode('Global_Values').setInput(0,nuke.toNode('Invert1'))\n    refreshPulldown()\n\n### Define all flare types\n###\n\ndef Penta(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset .1 radius \{10.87 30.45 35.22\} ring_color \{.05 .005 .002\} inner_color \{.04 0 0\} chroma_spread .01 chroma_shift -2 flattening .82 sharpness .73 corners_angle 5 mult_num 18 mult_seed 6 mult_offset 2 mult_size .99 mult_color .3 mult_brightness -.68 mult_visibility .36 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Iris(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 1.6 radius \{10.87 30.45 35.22\} size_mult 10 ring_color \{1 1 1\} inner_color \{.5 .5 .5\} chroma_spread 0 chroma_shift 0 brightness .005 flattening .55 sharpness .9 corners_angle 5 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Glow(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 0 radius \{0 50 2000\} size_mult 2.5 ring_color .2 inner_color 2  outer_falloff 10 inner_falloff .3 chroma_spread -.05 chroma_shift 0 brightness 1 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Ring(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset -2 radius \{247 259 281\} size_mult 1.8 ring_color \{1 1 1\} inner_color \{0 0 0\} chroma_spread -0.03 chroma_shift 0 brightness .01 flattening 0 sharpness .5 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef SmallInsideRing(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 0 radius \{221 327 415\} size_mult .5 anamorph 1.5 ring_color \{.46 .46 .46\} inner_color \{.1 .1 .1\} outer_falloff 3.1 chroma_spread 0 chroma_shift 0 brightness \{.121 -.02 .05\} flattening 0 sharpness .005 corners_angle 44 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef SmallCenter(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 0 radius \{0 15 800\} size_mult .15 anamorph 1.5 ring_color \{2 2 2\} inner_color \{2 2 2\} outer_falloff 6.6 chroma_spread 0 chroma_shift 0 brightness 2 flattening 0 sharpness .5 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef FatCenter(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 0 radius \{80 7.6 700\} size_mult .7 anamorph 1.33 ring_color \{2 2 2\} inner_color \{2 2 2\} outer_falloff 3.1 chroma_spread 0 chroma_shift 0 brightness \{.33 .65 .96\} flattening 0 sharpness .5 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Streak(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 0 radius \{0 304 400\} size_mult 1 anamorph 10 ring_color .67 inner_color 0 outer_falloff 4.2 chroma_spread .048 chroma_shift 0 brightness \{.13 .18 .405\} vis_out 1.02 flattening 0 sharpness .5 asym_multiplier 0 asym_falloff 8.8 asym_angle 198 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef CenterStreak(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 0 radius \{0 20 100\} size_mult 1 anamorph 5 ring_color .76 inner_color 1 outer_falloff 3.1 chroma_spread .034 chroma_shift 0 brightness \{.6 1 1.4\} vis_out 1.02 flattening 0 sharpness .5 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Reflection1(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset .25 radius \{0 30.5 100\} size_mult .3 anamorph 1.2 ring_color 1 inner_color 1 outer_falloff 1.05 inner_falloff 1.2 chroma_spread .06 chroma_shift 9.4 brightness .045 vis_out 1.1 corners 6  flattening .2 sharpness .43 corners_angle -30  mult_num 6 mult_offset 2.55 mult_size .32 mult_visibility .2 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Reflection2(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset .25 radius \{0 2.61 500\} size_mult .45 anamorph 1.2 ring_color 1 inner_color 1 outer_falloff 1.05 inner_falloff 1.2 chroma_spread .06 chroma_shift 9.4 brightness .012 vis_out 1.1 corners 6  flattening .2 sharpness .43 corners_angle -30 asym_multiplier .001 asym_falloff 3.35 mult_num 30 mult_offset 3.65 mult_size .75 mult_brightness .6 mult_visibility .3 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Spots(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 2 radius \{1.95 198.25 320.39\} anamorph .5 size_mult .3 ring_color \{.45 .77 1\} inner_color \{.56 .87 1\}  outer_falloff 1 inner_falloff 1 brightness .042 corners 4 flattening .8  sharpness .695 corners_angle 45 mult_num 23 mult_size .58 mult_color .42 mult_brightness .71 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Shaft(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 0 radius \{80 100 120\} anamorph .1 size_mult 30.5 ring_color \{.56 .63 1\} inner_color \{.3 .4 .5\}  outer_falloff 1 inner_falloff 1 brightness 1 asym_multiplier 0 asym_falloff 10 asym_angle -50 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Artifact(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 0 radius \{80 100 120\} anamorph .1 size_mult \{30 .02\} ring_color \{.56 .63 1\} inner_color \{.3 .4 .5\}  outer_falloff 1 inner_falloff 1 brightness 1 asym_multiplier 0 asym_falloff 10 asym_angle 46 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Knotches(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos height/2\} offset .8 radius \{87.51 107.51 118.24\} size_mult 7.2 anamorph 1 ring_color 1 inner_color 0 outer_falloff 1 inner_falloff 4 chroma_spread -.01 chroma_shift 0 brightness 1 corners 4 flattening 0 sharpness .5 corners_angle 0 asym_repeat 30 asym_multiplier 0 asym_falloff 10 asym_angle 0 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef StarFlare(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 0 radius \{0 10 600\} size_mult 1.7 anamorph 1.2 ring_color .67 inner_color 1 outer_falloff 3.1 inner_falloff 1 chroma_spread .148 chroma_shift 0 brightness \{.107 .165 .223\} vis_out 1.1 corners 50  flattening 61 sharpness 1 corners_angle -30 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef Hoop(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 2.35 radius \{0 450 500\} size_mult 1 anamorph 1 ring_color .06 inner_color 0 outer_falloff .9 inner_falloff 2.1 chroma_spread .076 chroma_shift 3.6 brightness \{.72 .42 .39\} vis_out 1.1 corners 1  flattening 13 sharpness 1 asym_multiplier .003 asym_falloff 10 asym_angle 146 mult_num 30 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef VertStreak(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset .2 radius \{80 34 2800\} size_mult .05 anamorph .14 ring_color .44 inner_color 1 outer_falloff 3.1 chroma_spread .034 chroma_shift 0 brightness \{.066 .105 .156\} vis_out 1.02 corners 1  flattening 23 sharpness 1 corners_angle 6 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef TwoPntStar(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset 0 radius \{80 34 500\} size_mult 4.8 anamorph 1.01 ring_color 1 inner_color 1 outer_falloff 3.1 chroma_spread .034 chroma_shift 0 brightness \{.52 .84 1.18\} flattening 0 vis_out 1.02 corners 3  flattening 27 sharpness .76 corners_angle 6 asym_multiplier 0 asym_falloff 1.95 asym_angle 180 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef LowStreak(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset .25 radius \{0 7.63 700\} size_mult .7 anamorph 20 ring_color .55 inner_color .5 outer_falloff 3.1 chroma_spread .116 chroma_shift 0 brightness \{.064 .137 .21\} vis_out 1.02 flattening 0 sharpness .5 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\ndef SmallStreak(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos this.parent.pos\} offset .25 radius \{0 167 252\} size_mult .46 anamorph 11 ring_color .55 inner_color .5 outer_falloff 3.1 chroma_spread .116 chroma_shift 0 brightness \{.064 .137 .21\} vis_out 1.02 flattening 0 sharpness .5 vis_mask_size this.parent.mBlur', False)\n    exVar(nodeName, newNode)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n### Horizontal Flaretypes\n###\n\ndef MicroSpot(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newTrans = nuke.createNode('Transform',  ' translate \{ 0  (this.parent.pos-height/2)*-1 \} center \{this.parent.pos height/2\}',False)\n    newTrans.setInput(0,nuke.toNode('Remove1'))\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos height/2\} offset -.25 radius \{79 100 120\} size_mult \{.1 .1\} anamorph 1 ring_color \{.32 .48 1\} inner_color \{.32 .48 1\} outer_falloff .1 chroma_spread 0 chroma_shift 0 brightness .3 corners 4 flattening 1 sharpness .64 corners_angle 45 mult_num 10 mult_offset .75 mult_size .38 mult_color .72 mult_brightness -1 vis_mask_size this.parent.mBlur', False)\n    nuke.createNode('Transform',  ' translate \{ 0 this.parent.pos-height/2\} center \{this.parent.pos height/2\}',False)\n    exVar(nodeName, newNode)\n    newNode.setInput(0,newTrans)\n\ndef Stripes(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newTrans = nuke.createNode('Transform',  ' translate \{ 0  (this.parent.pos-height/2)*-1 \} center \{this.parent.pos height/2\}',False)\n    newTrans.setInput(0,nuke.toNode('Remove1'))\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos height/2\} offset 0 radius \{79 100 120\} size_mult \{1 .1\} anamorph 1 ring_color \{.32 .48 1\} inner_color \{.32 .48 1\} outer_falloff 10 chroma_spread 0 chroma_shift 0 brightness .155 corners 4 flattening .85 sharpness .8 corners_angle 45 mult_num 10 mult_offset 6 mult_size .57 mult_color 1.86 mult_brightness .51 vis_mask_size this.parent.mBlur', False)\n    nuke.createNode('Transform',  ' translate \{ 0 this.parent.pos-height/2\} center \{this.parent.pos height/2\}',False)\n    exVar(nodeName, newNode)\n    newNode.setInput(0,newTrans)\n\ndef MultiIris(nodeName):\n    nodeName = nodeName + str(numNodes)\n    newTrans = nuke.createNode('Transform',  ' translate \{ 0  (this.parent.pos-height/2)*-1 \} center \{this.parent.pos height/2\}',False)\n    newTrans.setInput(0,nuke.toNode('Remove1'))\n    newNode = nuke.createNode('Flare','name ' + nodeName + ' position \{this.parent.pos height/2\} offset .1 radius \{10.87 30.45 35.22\} size_mult 2.1 anamorph .63 ring_color \{.002 .031 .05\} inner_color \{0 .037 .04\} chroma_spread .01 chroma_shift -2 corners 4 flattening .82 sharpness .73 corners_angle -45 mult_num 18 mult_seed 6 mult_offset 2 mult_size .99 mult_color .3 mult_brightness -.68 mult_visibility .36 vis_mask_size this.parent.mBlur', False)\n    nuke.createNode('Transform',  ' translate \{ 0 this.parent.pos-height/2\} center \{this.parent.pos height/2\}',False)\n    exVar(nodeName, newNode)\n    newNode.setInput(0,newTrans)" +STARTLINE}
+ addUserKnob {26 gv l "Global Values"}
+ addUserKnob {6 hInput l "Has Input?" +STARTLINE}
+ addUserKnob {6 imask l "Invert Input Mask" -STARTLINE}
+ imask true
+ addUserKnob {12 pos}
+ addUserKnob {41 g_mult l Multiply T Global_Values.value}
+ addUserKnob {41 g_gamma l Gamma T Global_Values.value_1}
+ addUserKnob {41 g_sat l Saturation T Global_Values.saturation}
+ addUserKnob {20 fOptions l "Flicker Options" n 1}
+ fOptions 0
+ addUserKnob {6 rFlicker l "Random Flicker" +STARTLINE}
+ addUserKnob {7 Speed R 0 2}
+ addUserKnob {7 Amplitude}
+ addUserKnob {7 Level}
+ addUserKnob {20 endGroup_1 l endGroup n -1}
+ addUserKnob {26 ""}
+ addUserKnob {7 mBlur l "Mask Blur" R 0 50}
+ mBlur 2
+ addUserKnob {26 ""}
+ addUserKnob {4 PresetsList l "Presets List" t "Select prebuilt flares here." -STARTLINE M {-}}
+ addUserKnob {22 makePreset l "Make Preset" -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\nmakePreset()"}
+ addUserKnob {22 rInput l Refresh t "Reset the stream, delete all Flare nodes and related knobs" -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\nrefreshNode()"}
+ addUserKnob {26 space l "" -STARTLINE T "\t\t\t"}
+ addUserKnob {22 info l "<div style='color:grey'>info</div>" t "Click here for some info" -STARTLINE T "nuke.message(\"\"\"\nnFlare_v2\nCurrently WIP: \n-Easier color management\n-Pack into gizmo without complicating list of flares into a 'User' tab\n-Refine flare shapes\n-Make icons and make'em pretty\n\n-Construct tutorial on how to use efficiently without messing up (if you can? still need to test with unfamiliar people)\n\"\"\")"}
+ addUserKnob {26 ""}
+ addUserKnob {26 ft l "Flare Types"}
+ addUserKnob {22 Penta T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())" +STARTLINE}
+ addUserKnob {22 Iris -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 Glow -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 Ring -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 SmallInsideRing l "Sm. Ring" T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())" +STARTLINE}
+ addUserKnob {22 SmallCenter l "Sm. Center" -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 FatCenter -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 Streak -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 CenterStreak l "Cen. Streak" T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())" +STARTLINE}
+ addUserKnob {22 SmallStreak l "Sm. Streak" -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 LowStreak -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 TwoPntStar l "2 Point Star" -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 VertStreak T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())" +STARTLINE}
+ addUserKnob {22 Hoop -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 StarFlare -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 Reflection1 -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 Reflection2 T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())" +STARTLINE}
+ addUserKnob {22 Spots -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 Shaft -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 Artifact -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 MultiIris T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())" +STARTLINE}
+ addUserKnob {22 MicroSpot -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 Stripes -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {22 Knotches -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\neval(nuke.thisKnob().name())(nuke.thisKnob().name())"}
+ addUserKnob {26 lon l "List Flares"}
+}
+add_layer {rgba redguard1.glow rgba.warper rgba.Z}
+ Constant {
+  inputs 0
+  channels rgba
+  name Constant1
+  selected true
+  xpos 380
+  ypos 1263
+ }
+ Input {
+  inputs 0
+  name Input1
+  selected true
+  xpos 100
+  ypos 1143
+ }
+ Switch {
+  inputs 2
+  which {{!parent.hInput i}}
+  name Switch1
+  selected true
+  xpos 100
+  ypos 1287
+ }
+ Invert {
+  channels alpha
+  name Invert1
+  selected true
+  xpos 100
+  ypos 1389
+  disable {{!parent.imask i}}
+ }
+set N961b9e0 [stack 0]
+ Group {
+  name Global_Values
+  xpos 100
+  ypos 3231
+  addUserKnob {20 User}
+  addUserKnob {41 value T Multiply1.value}
+  addUserKnob {41 value_1 l value T Gamma1.value}
+  addUserKnob {41 saturation T Saturation2.saturation}
+  addUserKnob {7 random}
+  random {{(Amplitude*(random((frame*Speed)+0))-(abs(Amplitude/2))+Level)}}
+ }
+  Input {
+   inputs 0
+   name Input1
+   xpos 85
+   ypos 206
+  }
+  Multiply {
+   name Multiply1
+   xpos 85
+   ypos 273
+  }
+  Multiply {
+   value {{parent.random i}}
+   name Multiply2
+   xpos 85
+   ypos 345
+   disable {{!parent.parent.rFlicker i}}
+  }
+add_layer {rgb rgb.red rgb.green rgb.blue rgb.alpha}
+  Saturation {
+   name Saturation2
+   xpos 85
+   ypos 417
+  }
+  Gamma {
+   name Gamma1
+   xpos 85
+   ypos 489
+  }
+  Crop {
+   box {0 0 {width i} {height i}}
+   name Crop1
+   xpos 85
+   ypos 525
+  }
+  Output {
+   name Output1
+   xpos 85
+   ypos 684
+  }
+ end_group
+ Output {
+  name Output1
+  xpos 100
+  ypos 3303
+ }
+push $N961b9e0
+ Remove {
+  operation keep
+  channels alpha
+  name Remove1
+  selected true
+  xpos 520
+  ypos 1389
+ }
+end_group
