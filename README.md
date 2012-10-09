@@ -23,8 +23,6 @@ Upon downloading from git, copying from source, or retyping it all in the same s
 
 The ideal folder structure of your .nuke folder should at least include:	
 * assets
-* gizmos
-* icons
 * Toolsets
 
 In which case, it would be best for organizational purposes to drop the .nk file into the Toolsets folder, as it is essentially a group rather than a gizmo. 
