@@ -41,7 +41,7 @@ Has been tested on equipment using
 ## Current Status
 * Proceed with tests on Mac & Linux
 * Proceed with tests on other versions of Nuke
-* Investigate feesability of icons
+* Investigate feasibility of icons
 * Aim to implement into a gizmo format (User tab generation issue)
 * Global color options
 
