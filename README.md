@@ -41,10 +41,14 @@ Has been tested on equipment using
 ## Current Status
 * Proceed with tests on Mac & Linux
 * Proceed with tests on other versions of Nuke
+* Investigate feesability of icons
+* Aim to implement into a gizmo format (User tab generation issue)
+* Global color options
 
 ## Contact
 #### Creator
 
 [Nicholas Daniels](http://github.com/nicholasdanielsvfx)  
-[Website](http://www.endyarts.com)
+[Website](http://www.endyarts.com)  
+[Email](mailto:endyarts@gmail.com)
 
