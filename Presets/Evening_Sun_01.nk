@@ -1,0 +1,224 @@
+set cut_paste_input [stack 0]
+version 6.3 v4
+add_layer {rgba redguard1.glow rgba.warper rgba.Z}
+Constant {
+ inputs 0
+ channels rgba
+ name Constant1
+ selected true
+ xpos 380
+ ypos 1263
+}
+Input {
+ inputs 0
+ name Input1
+ selected true
+ xpos 100
+ ypos 1143
+}
+Switch {
+ inputs 2
+ which {{!parent.hInput i}}
+ name Switch1
+ selected true
+ xpos 100
+ ypos 1287
+}
+Invert {
+ channels alpha
+ name Invert1
+ selected true
+ xpos 100
+ ypos 1389
+ disable {{!parent.imask i}}
+}
+set Nba37b80 [stack 0]
+Remove {
+ operation keep
+ channels alpha
+ name Remove1
+ selected true
+ xpos 520
+ ypos 1389
+}
+set Nba37eb0 [stack 0]
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {247 259 281}
+ size_mult 1.8
+ ring_color {1 1 1}
+ inner_color {0 0 0}
+ chroma_spread -0.03
+ brightness 0.01
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ asym_multiplier 0.001
+ asym_falloff 9.6
+ asym_angle -66
+ name Ring6
+ selected true
+ disable {{this.parent.Ring6_disable i}}
+}
+push $Nba37eb0
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset -0.4
+ radius {0 30.5 100}
+ size_mult 0.3
+ anamorph 1.2
+ inner_color 1
+ outer_falloff 1.05
+ inner_falloff 1.2
+ chroma_spread 0.06
+ chroma_shift 9.4
+ brightness {0.02071685344 0.09200000018 0.01511942409}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 0.2
+ sharpness 0.43
+ corners_angle -30
+ asym_multiplier 0.245
+ name Reflection15
+ selected true
+ disable {{this.parent.Reflection15_disable i}}
+}
+push $Nba37eb0
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset 0.25
+ radius {0 30.5 264.71}
+ size_mult 0.2
+ anamorph 1.2
+ inner_color 1
+ outer_falloff 1.05
+ inner_falloff 1.2
+ chroma_spread 0.06
+ chroma_shift 9.4
+ brightness 0.045
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 0.2
+ sharpness 0.43
+ corners_angle -30
+ mult_num 6
+ mult_offset 2.55
+ mult_size 0.32
+ mult_visibility 0.2
+ name Reflection14
+ selected true
+ disable {{this.parent.Reflection14_disable i}}
+}
+push $Nba37eb0
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {10.87 23.1 41.1}
+ size_mult 10
+ ring_color {1 1 1}
+ inner_color {0.5 0.5 0.5}
+ brightness {0.03500000015 0.01462011505 0.01207078714}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ sharpness 0.9
+ corners_angle 5
+ name Iris3
+ selected true
+ disable {{this.parent.Iris3_disable i}}
+}
+push $Nba37eb0
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {80 7.6 700}
+ size_mult 0.7
+ ring_color {2 2 2}
+ inner_color {2 2 2}
+ outer_falloff 3.1
+ brightness {0.9599999785 0.9141763449 0.6085358262}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 6.5
+ corners_angle 45
+ name FatCenter2
+ selected true
+ disable {{this.parent.FatCenter2_disable i}}
+}
+push $Nba37eb0
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {0 50 2000}
+ size_mult 2.5
+ ring_color 0.2
+ inner_color 2
+ outer_falloff 10
+ inner_falloff 0.3
+ chroma_spread -0.05
+ brightness {1 0.808267951 0.5535603762}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ name Glow1
+ selected true
+ disable {{this.parent.Glow1_disable i}}
+}
+push $Nba37eb0
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {10.87 30.45 1300}
+ size_mult 2.6
+ ring_color {1 1 1}
+ inner_color {1 1 1}
+ brightness {0.1159999967 0.05620410666 0}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 300
+ sharpness 0.78
+ corners_angle 45
+ name Iris0
+ selected true
+ disable {{this.parent.Iris0_disable i}}
+}
+push $Nba37b80
+Merge {
+ inputs 2
+ operation scrn
+ name Merge1
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge2
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge3
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge4
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge5
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge6
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge7
+ selected true
+}

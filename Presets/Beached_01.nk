@@ -1,0 +1,391 @@
+set cut_paste_input [stack 0]
+version 6.3 v4
+add_layer {rgba redguard1.glow rgba.warper rgba.Z}
+Constant {
+ inputs 0
+ channels rgba
+ name Constant1
+ selected true
+ xpos 380
+ ypos 1263
+}
+Input {
+ inputs 0
+ name Input1
+ selected true
+ xpos 100
+ ypos 1143
+}
+Switch {
+ inputs 2
+ which {{!parent.hInput i}}
+ name Switch1
+ selected true
+ xpos 100
+ ypos 1287
+}
+Invert {
+ channels alpha
+ name Invert1
+ selected true
+ xpos 100
+ ypos 1389
+ disable {{!parent.imask i}}
+}
+set N9fd7e60 [stack 0]
+Remove {
+ operation keep
+ channels alpha
+ name Remove1
+ selected true
+ xpos 520
+ ypos 1389
+}
+set N1747c790 [stack 0]
+Transform {
+ translate {0 {(this.parent.pos-height/2)*-1}}
+ center {{this.parent.pos} {height/2}}
+ name Transform1
+ selected true
+}
+Transform {
+ translate {0 {this.parent.pos-height/2}}
+ center {{this.parent.pos} {height/2}}
+ name Transform2
+ selected true
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {80 34 900}
+ size_mult 1.6
+ anamorph 1.01
+ ring_color 0.5
+ chroma_spread 0.034
+ brightness {0.2049999982 0.1248121485 0.04854186252}
+ vis_out 1.02
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 4
+ flattening 66
+ sharpness 0.95
+ corners_angle 170
+ asym_multiplier 0.5
+ asym_falloff 2
+ asym_angle 90
+ name TwoPntStar11
+ selected true
+ disable {{this.parent.TwoPntStar11_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {0 -464.53 500}
+ size_mult 5
+ anamorph 1.01
+ ring_color 0.5
+ brightness {1.179999948 0.6924661398 0.1224201992}
+ vis_out 1.02
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 3
+ flattening 51
+ sharpness 0.98
+ asym_multiplier 0
+ asym_falloff 3
+ asym_angle 180
+ name TwoPntStar10
+ selected true
+ disable {{this.parent.TwoPntStar10_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {80 7.6 700}
+ size_mult 0.7
+ ring_color {2 2 2}
+ inner_color {2 2 2}
+ outer_falloff 3.1
+ brightness {0.9599999785 0.5509985089 0.1952372938}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ name FatCenter9
+ selected true
+ disable {{this.parent.FatCenter9_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {0 10 600}
+ size_mult 1.7
+ ring_color 0.67
+ inner_color 1
+ outer_falloff 3.1
+ chroma_spread 0.148
+ brightness {0.2230000049 0.1128489748 0.1070000008}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 50
+ flattening 61
+ sharpness 1
+ corners_angle -30
+ name StarFlare8
+ selected true
+ disable {{this.parent.StarFlare8_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {0 50 2000}
+ size_mult 2.5
+ ring_color 0.2
+ inner_color 2
+ outer_falloff 10
+ inner_falloff 0.3
+ chroma_spread -0.05
+ brightness {0.3849999905 0.1089371443 0}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ name Glow7
+ selected true
+ disable {{this.parent.Glow7_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset 0.25
+ radius {0 30.5 100}
+ size_mult 0.3
+ anamorph 1.2
+ inner_color 1
+ outer_falloff 1.05
+ inner_falloff 1.2
+ chroma_spread 0.06
+ chroma_shift 9.4
+ brightness {0.04500000179 0.02865914628 0.02133700252}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 0.2
+ sharpness 0.43
+ corners_angle -30
+ mult_num 6
+ mult_offset 1.2
+ mult_size 0.32
+ mult_color -2.1
+ mult_visibility 0.2
+ name Reflection16
+ selected true
+ disable {{this.parent.Reflection16_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset 0.25
+ radius {0 2.61 500}
+ size_mult 0.45
+ anamorph 1.2
+ inner_color 1
+ outer_falloff 1.05
+ inner_falloff 1.2
+ chroma_spread 0.06
+ chroma_shift 9.4
+ brightness {0.004499999806 0.002946198918 0.001225509564}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 0.2
+ sharpness 0.43
+ corners_angle -30
+ asym_multiplier 0.001
+ asym_falloff 3.35
+ mult_num 30
+ mult_offset 3.65
+ mult_size 0.75
+ mult_brightness 0.6
+ mult_visibility 0.3
+ name Reflection25
+ selected true
+ disable {{this.parent.Reflection25_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset 1.55
+ radius {10.87 30.45 35.22}
+ ring_color {0.05 0.005 0.002}
+ inner_color {0.04 0 0}
+ brightness 0.23
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 0.82
+ sharpness 0.73
+ corners_angle 5
+ mult_num 6
+ mult_seed 6
+ mult_size 0.99
+ mult_color 0.3
+ mult_brightness -0.68
+ mult_visibility 0.36
+ name Penta4
+ selected true
+ disable {{this.parent.Penta4_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset 2.7
+ radius {10.87 30.45 35.22}
+ size_mult 5.5
+ ring_color {1 1 1}
+ inner_color {0.5 0.5 0.5}
+ brightness {0.004999999888 0.003955771681 0.0009772533085}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 1
+ sharpness 0.9
+ corners_angle 5
+ name Iris3
+ selected true
+ disable {{this.parent.Iris3_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset 2.45
+ radius {10.87 30.45 35.22}
+ size_mult 5.5
+ ring_color {1 1 1}
+ inner_color {0.5 0.5 0.5}
+ brightness {0.004999999888 0.003848068649 0.00126641721}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 1
+ sharpness 0.9
+ corners_angle 5
+ name Iris2
+ selected true
+ disable {{this.parent.Iris2_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset 0.65
+ radius {10.87 30.45 32.28}
+ size_mult 7
+ ring_color {0.05 0.005 0.002}
+ inner_color {0.04 0 0}
+ brightness 0.185
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 0.82
+ sharpness 0.86
+ corners_angle 5
+ mult_num 18
+ mult_seed 6
+ mult_offset 2
+ mult_size 0.99
+ mult_color 0.3
+ mult_brightness -0.68
+ mult_visibility 0.36
+ name Penta1
+ selected true
+ disable {{this.parent.Penta1_disable i}}
+}
+push $N1747c790
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset 1.05
+ radius {247 259 281}
+ size_mult 2.8
+ ring_color {1 1 1}
+ inner_color {0 0 0}
+ chroma_spread -0.03
+ chroma_shift 8.6
+ brightness 0.008
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ asym_multiplier 0
+ asym_falloff 1.8
+ asym_angle -54
+ name Ring0
+ selected true
+ disable {{this.parent.Ring0_disable i}}
+}
+push $N9fd7e60
+Merge {
+ inputs 2
+ operation scrn
+ name Merge1
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge2
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge3
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge4
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge5
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge6
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge7
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge8
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge9
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge10
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge11
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge12
+ selected true
+}

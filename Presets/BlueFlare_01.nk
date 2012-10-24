@@ -1,0 +1,283 @@
+set cut_paste_input [stack 0]
+version 6.3 v4
+add_layer {rgba redguard1.glow rgba.warper rgba.Z}
+Constant {
+ inputs 0
+ channels rgba
+ name Constant1
+ selected true
+ xpos 380
+ ypos 1263
+}
+Input {
+ inputs 0
+ name Input1
+ selected true
+ xpos 100
+ ypos 1143
+}
+Switch {
+ inputs 2
+ which {{!parent.hInput i}}
+ name Switch1
+ selected true
+ xpos 100
+ ypos 1287
+}
+Invert {
+ channels alpha
+ name Invert1
+ selected true
+ xpos 100
+ ypos 1389
+ disable {{!parent.imask i}}
+}
+set Nb6f5930 [stack 0]
+Remove {
+ operation keep
+ channels alpha
+ name Remove1
+ selected true
+ xpos 520
+ ypos 1389
+}
+set Nb6f5c60 [stack 0]
+Transform {
+ translate {0 {(this.parent.pos-height/2)*-1}}
+ center {{this.parent.pos} {height/2}}
+ name Transform3
+ selected true
+}
+Flare {
+ position {{this.parent.pos i} {height/2 i}}
+ offset 0.1
+ radius {10.87 30.45 76.4}
+ size_mult 2.1
+ anamorph 0.63
+ ring_color {0.002 0.031 0.05}
+ inner_color {0 0.037 0.04}
+ chroma_spread 0.01
+ chroma_shift -2
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 4
+ flattening 0.82
+ sharpness 0.73
+ corners_angle -45
+ mult_num 18
+ mult_seed 6
+ mult_offset 2
+ mult_size 0.99
+ mult_color 0.3
+ mult_brightness -0.68
+ mult_visibility 0.36
+ name MultiIris7
+ selected true
+ disable {{this.parent.MultiIris7_disable i}}
+}
+Transform {
+ translate {0 {this.parent.pos-height/2}}
+ center {{this.parent.pos} {height/2}}
+ name Transform4
+ selected true
+}
+push $Nb6f5c60
+Flare {
+ position {{this.parent.pos i} {height/2 i}}
+ offset 0.8
+ radius {87.51 107.51 118.24}
+ size_mult 7.2
+ ring_color 0.095
+ inner_color 0
+ inner_falloff 4
+ chroma_spread -0.01
+ brightness 0.1
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 4
+ asym_repeat 30
+ asym_multiplier 0
+ asym_falloff 10
+ asym_angle {{t*.5 i}}
+ name Knotches6
+ selected true
+ disable {{this.parent.Knotches6_disable i}}
+}
+push $Nb6f5c60
+Transform {
+ translate {0 {(this.parent.pos-height/2)*-1}}
+ center {{this.parent.pos} {height/2}}
+ name Transform1
+ selected true
+}
+Flare {
+ position {{this.parent.pos i} {height/2 i}}
+ radius {74.59 95.59 500}
+ size_mult {1 0.1}
+ ring_color {0.32 0.48 1}
+ inner_color {0.32 0.48 1}
+ outer_falloff 10
+ brightness 0.05
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 4
+ flattening 0.85
+ sharpness 0.8
+ corners_angle 45
+ mult_num 10
+ mult_offset 6
+ mult_size 0.57
+ mult_color 1.86
+ mult_brightness 0.51
+ name Stripes5
+ selected true
+ disable {{this.parent.Stripes5_disable i}}
+}
+Transform {
+ translate {0 {this.parent.pos-height/2}}
+ center {{this.parent.pos} {height/2}}
+ name Transform2
+ selected true
+}
+push $Nb6f5c60
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {80 7.6 700}
+ anamorph 1.33
+ ring_color {2 2 2}
+ inner_color {2 2 2}
+ outer_falloff 3.1
+ brightness {0.33 0.65 0.96}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ name FatCenter4
+ selected true
+ disable {{this.parent.FatCenter4_disable i}}
+}
+push $Nb6f5c60
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ radius {221 327 415}
+ size_mult 0.5
+ ring_color {0.46 0.46 0.46}
+ inner_color {0.1 0.1 0.1}
+ outer_falloff 3.1
+ brightness {0.121 -0.02 0.05}
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ sharpness 0.005
+ corners_angle 44
+ name SmallInsideRing3
+ selected true
+ disable {{this.parent.SmallInsideRing3_disable i}}
+}
+push $Nb6f5c60
+Flare {
+ position {{this.parent.pos} {this.parent.pos}}
+ radius {0 50 2000}
+ size_mult 2.5
+ ring_color 0.2
+ inner_color 2
+ outer_falloff 10
+ inner_falloff 0.3
+ chroma_spread -0.05
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur}}
+ name Glow2
+ selected true
+ disable {{this.parent.Glow2_disable}}
+}
+push $Nb6f5c60
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset 1.6
+ radius {10.87 30.45 35.22}
+ size_mult 10
+ ring_color {1 1 1}
+ inner_color {0.5 0.5 0.5}
+ brightness 0.005
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 0.55
+ sharpness 0.9
+ corners_angle 5
+ name Iris1
+ selected true
+ disable {{this.parent.Iris1_disable i}}
+}
+push $Nb6f5c60
+Flare {
+ position {{this.parent.pos i} {this.parent.pos i}}
+ offset 0.1
+ radius {10.87 34.4 174.46}
+ ring_color {0.002000001026 0.03279438242 0.05000000075}
+ inner_color {0 0.03658845648 0.03999999911}
+ chroma_spread 0.01
+ chroma_shift -2
+ vis_mask rgba.alpha
+ vis_mask_size {{this.parent.mBlur i}}
+ corners 6
+ flattening 0.82
+ sharpness 0.44
+ corners_angle 5
+ mult_num 18
+ mult_seed 6
+ mult_offset 2
+ mult_size 0.99
+ mult_color 0.3
+ mult_brightness -0.68
+ mult_visibility 0.36
+ name Penta0
+ selected true
+ disable {{this.parent.Penta0_disable i}}
+}
+push $Nb6f5930
+Merge {
+ inputs 2
+ operation scrn
+ name Merge1
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge2
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge3
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge4
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge5
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge6
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge7
+ selected true
+}
+Merge {
+ inputs 2
+ operation scrn
+ name Merge8
+ selected true
+}
