@@ -30,7 +30,7 @@ Group {
  addUserKnob {7 mBlur l "Mask Blur" R 0 50}
  mBlur 2
  addUserKnob {26 ""}
- addUserKnob {4 PresetsList l "Presets List" t "Select prebuilt flares here." -STARTLINE M {- Beached_01 Evening_Sun_01 BlueFlare_01 JayJay_v01 BlueSpark_01}}
+ addUserKnob {4 PresetsList l "Presets List" t "Select prebuilt flares here." -STARTLINE M {-}}
  addUserKnob {22 makePreset l "Make Preset" -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\nmakePreset()"}
  addUserKnob {22 rInput l Refresh t "Reset the stream, delete all Flare nodes and related knobs" -STARTLINE T "exec(nuke.thisNode().knob('flareFunc').command())\nrefreshNode()"}
  addUserKnob {26 space l "" -STARTLINE T "\t\t\t"}
