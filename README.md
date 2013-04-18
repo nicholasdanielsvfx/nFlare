@@ -1,3 +1,9 @@
+I will no longer be supporting this repository,and will be revisiting the setup to address issues involving more advanced features of flares. Hope you all understand, and enjoy the script! 
+=
+- Nicholas
+=
+---
+
 nFlare - Nuke Gizmo
 =
 `This node's goal is to create flares faster and more optimally, based on premade Flare nodes.`
